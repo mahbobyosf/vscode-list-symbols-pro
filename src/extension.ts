@@ -9,7 +9,39 @@ function processNodes(symbols: vscode.DocumentSymbol[], depth: number, lines: st
     const publicReg = /\bpublic\b/;
     const line = lines[symbol.selectionRange.start.line];
     const privacy = privateReg.exec(line) ? 'private ' : publicReg.exec(line) ? 'public ' : '';
-    result += `${tabs}${privacy}${SymbolKinds[symbol.kind]} ${symbol.name}\n`;
+
+    // Extract return type for methods and functions
+    let returnType = '';
+    if (symbol.kind === vscode.SymbolKind.Method || symbol.kind === vscode.SymbolKind.Function) {
+      // Get the line containing the method declaration
+      const methodLine = lines[symbol.selectionRange.start.line];
+
+      // Match different return type patterns for various languages
+      const returnTypePatterns = [
+        // Dart/TypeScript: Future<void> methodName() or String methodName()
+        /^\s*([A-Za-z_][A-Za-z0-9_<>?,\s]*)\s+[A-Za-z_][A-Za-z0-9_]*\s*\(/,
+        // Dart async: Future<ReturnType> methodName() async
+        /^\s*([A-Za-z_][A-Za-z0-9_<>?,\s]*)\s+[A-Za-z_][A-Za-z0-9_]*\s*\([^)]*\)\s+async/,
+        // TypeScript: methodName(): ReturnType
+        /[A-Za-z_][A-Za-z0-9_]*\s*\([^)]*\)\s*:\s*([A-Za-z_][A-Za-z0-9_<>?,\s]*)\s*[{;]/,
+        // Java/C#: public ReturnType methodName()
+        /^\s*(?:public|private|protected)?\s*([A-Za-z_][A-Za-z0-9_<>?,\s]*)\s+[A-Za-z_][A-Za-z0-9_]*\s*\(/,
+      ];
+
+      for (const pattern of returnTypePatterns) {
+        const match = methodLine.match(pattern);
+        if (match && match[1]) {
+          const extractedType = match[1].trim();
+          // Skip if it's a visibility modifier or common keywords
+          if (!['public', 'private', 'protected', 'static', 'final', 'const', 'async', 'void'].includes(extractedType.toLowerCase()) || extractedType.toLowerCase() === 'void') {
+            returnType = `: ${extractedType}`;
+            break;
+          }
+        }
+      }
+    }
+
+    result += `${tabs}${privacy}${SymbolKinds[symbol.kind]} ${symbol.name}${returnType}\n`;
     if (symbol.children) {
       result += processNodes(symbol.children, depth + 1, lines);
     }
@@ -28,7 +60,7 @@ const getRelativeFilePath = (uri: vscode.Uri) => {
 };
 
 export function activate(context: vscode.ExtensionContext) {
-	context.subscriptions.push(vscode.commands.registerCommand('extension.listSymbols', () => {
+  context.subscriptions.push(vscode.commands.registerCommand('extension.listSymbols', () => {
     if (!vscode.window.activeTextEditor) {
       vscode.window.showWarningMessage('There must be an active text editor');
       return;
@@ -43,7 +75,7 @@ export function activate(context: vscode.ExtensionContext) {
           vscode.window.showTextDocument(doc);
         });
       });
-	}));
+  }));
 
   context.subscriptions.push(vscode.commands.registerCommand('extension.listAllSymbolsInFolder', (fileMeta) => {
     const folderPath = getRelativeFilePath(fileMeta);

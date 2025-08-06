@@ -1,15 +1,37 @@
-# List Symbols [![Visual Studio Marketplace Installs - Azure DevOps Extension](https://img.shields.io/visual-studio-marketplace/azure-devops/installs/total/jmbeach.list-symbols)](https://marketplace.visualstudio.com/items?itemName=jmbeach.list-symbols) [![Visual Studio Marketplace Rating (Stars)](https://img.shields.io/visual-studio-marketplace/stars/jmbeach.list-symbols)](https://marketplace.visualstudio.com/items?itemName=jmbeach.list-symbols)
+# List Symbols Pro
 
-![List Symbols Icon](src/assets/icon.png)
+![List Symbols Pro Icon](src/assets/icon.png)
 
-This extension will list all symbols in a code file as plain text using vscode's built-in symbol processing capabilities.
+An enhanced version of the List Symbols extension that lists all symbols in a code file as plain text using VS Code's built-in symbol processing capabilities, with added support for return type detection.
 
-Simply run `ctrl + shift + p` -> `List Symbols`
+Simply run `Ctrl + Shift + P` -> `List Symbols Pro`
 
 ![Example usage](./demo.png)
 
-and you will get output like the following in a new tab (Based on [this example code](https://github.com/WebDevSimplified/Vanilla-JavaScript-Calculator)):
+and you will get output like the following in a new tab with **enhanced return type detection**:
 
+**For Dart code:**
+```
+class NotificationService
+	field _firebaseMessaging
+	field _invitationService
+	field _friendshipService
+	method initialize: Future<void>
+	method _requestNotificationPermissions: Future<NotificationSettings>
+	method _setupFcmToken: Future<void>
+	method _configureForegroundNotificationHandler
+	method _configureBackgroundNotificationHandler
+	method _configureTokenRefreshListener
+	method _handleNotification
+	method _getNotificationType
+	method navigateToAcceptInvitationPage
+	method navigateToFriendRequestsPage
+	method navigateToFriendsPage
+	method navigateToHome
+	method updateUserActivity: Future<void>
+```
+
+**For JavaScript/TypeScript code:**
 ```
 class Calculator
 	constructor constructor
@@ -30,6 +52,25 @@ class Calculator
 	method updateDisplay
 ```
 
+## Features
+
+- **Return Type Detection**: Automatically detects and displays return types for methods and functions
+- **Multi-Language Support**: Works with Dart, TypeScript, JavaScript, Java, C#, and more
+- **Privacy Modifier Detection**: Shows public/private visibility for class members
+- **Nested Symbol Support**: Displays hierarchical structure with proper indentation
+
 ## List All Symbols in Folder
 
-Also, you can right click a folder and select `List All Symbols in Folder` to get a combined output of all of the files in that folder.
+You can right-click a folder and select `List All Symbols in Folder Pro` to get a combined output of all files in that folder, including return types for all detected methods.
+
+## Supported Languages
+
+- **Dart**: Full support including `Future<T>`, `Stream<T>`, and other generic return types
+- **TypeScript**: Method signature return types (`: ReturnType`)
+- **JavaScript**: Basic function detection
+- **Java/C#**: Public/private method return types
+- **And more**: The extension uses VS Code's symbol provider, so it works with any language that supports symbol detection
+
+---
+
+*This is an enhanced fork of the original [List Symbols](https://github.com/jmbeach/vscode-list-symbols) extension by jmbeach, with added return type detection and improved language support.*

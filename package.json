@@ -21,11 +21,11 @@
 		"commands": [
 			{
 				"command": "extension.listSymbols",
-				"title": "List Symbols"
+				"title": "List Symbols Pro"
 			},
 			{
 				"command": "extension.listAllSymbolsInFolder",
-				"title": "List All Symbols in Folder"
+				"title": "List All Symbols in Folder Pro"
 			}
 		],
 		"menus": {
